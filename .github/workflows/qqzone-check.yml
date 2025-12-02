@@ -1,0 +1,35 @@
+name: QQZone Cookie Check
+
+on:
+  schedule:
+    - cron: '0 22 * * 0-4'
+    - cron: '0 2 * * 1-5'
+    - cron: '0 6 * * 1-5'
+    - cron: '0 10 * * 1-5'
+  workflow_dispatch:
+
+concurrency:
+  group: qqzone-cookie-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run check only
+        env:
+          QQ_COOKIE: ${{ secrets.QQ_COOKIE }}
+          TARGET_UIN: ${{ secrets.TARGET_UIN }}
+          QQ_UIN: ${{ secrets.QQ_UIN }}
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+          DINGTALK_KEYWORD: ${{ secrets.DINGTALK_KEYWORD }}
+          DINGTALK_KEYWORDS: ${{ secrets.DINGTALK_KEYWORDS }}
+          CHECK_ONLY: '1'
+        run: |
+          node scripts/qzone_msg.js

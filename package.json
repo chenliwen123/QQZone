@@ -1,0 +1,22 @@
+{
+  "name": "qqzone-auto-message",
+  "version": "1.0.0",
+  "private": true,
+  "description": "QQ空间自动留言（Cookie+Node脚本）",
+  "main": "scripts/qzone_msg.js",
+  "scripts": {
+    "qzone": "node scripts/qzone_msg.js",
+    "start": "node scripts/qzone_msg.js"
+  },
+  "keywords": [
+    "qqzone",
+    "qzone",
+    "message",
+    "cookie"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
+}

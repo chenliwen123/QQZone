@@ -1,0 +1,33 @@
+name: QQZone Daily Message
+
+on:
+  schedule:
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: qqzone-daily-message
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run
+        env:
+          QQ_COOKIE: ${{ secrets.QQ_COOKIE }}
+          TARGET_UIN: ${{ secrets.TARGET_UIN }}
+          QQ_UIN: ${{ secrets.QQ_UIN }}
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
+          DINGTALK_KEYWORD: ${{ secrets.DINGTALK_KEYWORD }}
+          DINGTALK_KEYWORDS: ${{ secrets.DINGTALK_KEYWORDS }}
+        run: |
+          for i in 1 2 3; do
+          node scripts/qzone_msg.js && break || sleep 5
+          done
