@@ -1,9 +1,9 @@
-name: Scheduled Node Job
+name: Scheduled Node Job with Hourly Check
 
 on:
   schedule:
-    # 每天 UTC 03:00 触发（北京时间 11:00）
-    - cron: "0 3 * * *"
+    # 每小时触发一次
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -22,8 +22,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run project with env
-        run: npm run start
+      - name: Run project at 11:00 Beijing Time only
+        run: |
+          HOUR=$(TZ=Asia/Shanghai date +'%H')
+          echo "Current Beijing hour: $HOUR"
+          if [ "$HOUR" -eq "11" ]; then
+            echo "It's 11 AM Beijing Time, running npm start..."
+            npm run start
+          else
+            echo "Not 11 AM yet, skipping execution."
+          fi
         env:
           QQ_COOKIE: ${{ secrets.QQ_COOKIE }}
           TARGET_UIN: ${{ secrets.TARGET_UIN }}

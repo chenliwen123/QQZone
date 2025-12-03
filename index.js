@@ -330,13 +330,18 @@ async function main() {
   process.exit(1);
 }
 
+function pad(n) {
+  return String(n).padStart(2, '0');
+}
+
 async function notifyFailure(reason) {
   const webhook = process.env.DINGTALK_WEBHOOK;
   const kw = process.env.DINGTALK_KEYWORDS || 'QQ空间通知';
   const msgtype = (process.env.DINGTALK_MSGTYPE || 'markdown').toLowerCase();
   const pad = n => String(n).padStart(2, '0');
   const now = new Date();
-  const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  const beijingTime = new Date(now.getTime() + 8 * 60 * 60 * 1000); // UTC+8
+  const ts = `${beijingTime.getUTCFullYear()}-${pad(beijingTime.getUTCMonth()+1)}-${pad(beijingTime.getUTCDate())} ${pad(beijingTime.getUTCHours())}:${pad(beijingTime.getUTCMinutes())}:${pad(beijingTime.getUTCSeconds())}`;
   const title = `${kw}: QQ空间留言失败`;
   const reasonSnippet = String(reason).slice(0,300);
   const md = `### ❌ QQ空间留言失败\n- 目标空间：${hostUin}\n- 原因摘录（节选）：${reasonSnippet}\n- 建议检查：Cookie 有效性（CHECK_ONLY=1）、空间权限、网络状态\n- 时间：${ts}`;
@@ -358,7 +363,8 @@ async function notifySuccess(msg) {
   const msgtype = (process.env.DINGTALK_MSGTYPE || 'markdown').toLowerCase();
   const pad = n => String(n).padStart(2, '0');
   const now = new Date();
-  const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  const beijingTime = new Date(now.getTime() + 8 * 60 * 60 * 1000); // UTC+8
+  const ts = `${beijingTime.getUTCFullYear()}-${pad(beijingTime.getUTCMonth()+1)}-${pad(beijingTime.getUTCDate())} ${pad(beijingTime.getUTCHours())}:${pad(beijingTime.getUTCMinutes())}:${pad(beijingTime.getUTCSeconds())}`;
   const title = `${kw}: QQ空间留言成功`;
   const summary = String(msg).slice(0,200);
   const spaceUrl = `https://user.qzone.qq.com/${hostUin}`;
