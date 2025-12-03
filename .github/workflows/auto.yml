@@ -1,0 +1,31 @@
+
+name: Auto QZone Stable Message
+
+on:
+  schedule:
+    - cron: "0 1 * * *"   # every day 09:00 (UTC+8)
+  workflow_dispatch:
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install (no deps)
+        run: echo "No npm dependencies to install"
+
+      - name: Run
+        env:
+          QQ_COOKIE: ${{ secrets.QQ_COOKIE }}
+          TARGET_UIN: ${{ secrets.TARGET_UIN }}
+          QQ_UIN: ${{ secrets.QQ_UIN }}
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_KEYWORDS: ${{ secrets.DINGTALK_KEYWORDS }}
+        run: node index.js

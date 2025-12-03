@@ -1,7 +1,5 @@
 {
     // 使用 IntelliSense 了解相关属性。 
-    // 悬停以查看现有属性的描述。
-    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
@@ -11,7 +9,15 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\scripts\\qzone_msg.js"
+            "program": "${workspaceFolder}/index.js",
+
+            // ⭐ 自动读取 .env 文件
+            "envFile": "${workspaceFolder}/.env",
+
+            // ⭐ 如果你需要附加环境变量也可以写这里（可选）
+            "env": {
+                // "NODE_ENV": "development"
+            }
         }
     ]
 }
