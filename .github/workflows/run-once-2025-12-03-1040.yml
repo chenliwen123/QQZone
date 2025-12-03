@@ -1,27 +1,33 @@
-name: QQZone Cookie Check
+name: QQZone Run Once (2025-12-03 10:40 CST)
 
 on:
   schedule:
-    - cron: '0 22 * * 0-4'
-    - cron: '0 2 * * 1-5'
-    - cron: '0 6 * * 1-5'
-    - cron: '0 10 * * 1-5'
-  workflow_dispatch:
-
-concurrency:
-  group: qqzone-cookie-check
-  cancel-in-progress: false
+    - cron: '40 2 3 12 *'
 
 jobs:
-  check:
+  run-once:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Guard date (run only on 2025-12-03 UTC)
+        run: |
+          set -e
+          D=$(date -u +%Y-%m-%d)
+          echo "UTC date: $D"
+          if [ "$D" != "2025-12-03" ]; then
+            echo "Skip: not 2025-12-03"
+            exit 0
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Run check only
+
+      - name: Run QQZone message
         env:
           QQ_COOKIE: ${{ secrets.QQ_COOKIE }}
           TARGET_UIN: ${{ secrets.TARGET_UIN }}
@@ -30,6 +36,5 @@ jobs:
           DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
           DINGTALK_KEYWORD: ${{ secrets.DINGTALK_KEYWORD }}
           DINGTALK_KEYWORDS: ${{ secrets.DINGTALK_KEYWORDS }}
-          CHECK_ONLY: '1'
         run: |
           node scripts/qzone_msg.js
