@@ -333,9 +333,20 @@ async function main() {
 async function notifyFailure(reason) {
   const webhook = process.env.DINGTALK_WEBHOOK;
   const kw = process.env.DINGTALK_KEYWORDS || 'QQ空间通知';
+  const msgtype = (process.env.DINGTALK_MSGTYPE || 'markdown').toLowerCase();
+  const pad = n => String(n).padStart(2, '0');
+  const now = new Date();
+  const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  const title = `${kw}: QQ空间留言失败`;
+  const reasonSnippet = String(reason).slice(0,300);
+  const md = `### ❌ QQ空间留言失败\n- 目标空间：${hostUin}\n- 原因摘录（节选）：${reasonSnippet}\n- 建议检查：Cookie 有效性（CHECK_ONLY=1）、空间权限、网络状态\n- 时间：${ts}`;
+  const txt = `❌ QQ空间留言失败\n目标：${hostUin}\n原因（节选）：${reasonSnippet}\n建议：检查 Cookie（CHECK_ONLY=1）、空间权限、网络状态\n时间：${ts}`;
   if (webhook) {
-    const text = `${kw}: QQ空间留言失败，目标:${hostUin}，原因（节选）:${String(reason).slice(0,600)}`;
-    try { await dingtalk.sendText(webhook, text); console.log('[NOTIFIED]'); } catch(e){ console.error('[NOTIFY_ERR]', String(e)); }
+    try {
+      if (msgtype === 'markdown') { await dingtalk.sendMarkdown(webhook, title, md); }
+      else { await dingtalk.sendText(webhook, `${kw}: ${txt}`); }
+      console.log('[NOTIFIED]');
+    } catch(e){ console.error('[NOTIFY_ERR]', String(e)); }
   } else {
     console.error('[NO_WEBHOOK] DingTalk webhook not configured.');
   }
@@ -344,9 +355,21 @@ async function notifyFailure(reason) {
 async function notifySuccess(msg) {
   const webhook = process.env.DINGTALK_WEBHOOK;
   const kw = process.env.DINGTALK_KEYWORDS || 'QQ空间通知';
+  const msgtype = (process.env.DINGTALK_MSGTYPE || 'markdown').toLowerCase();
+  const pad = n => String(n).padStart(2, '0');
+  const now = new Date();
+  const ts = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  const title = `${kw}: QQ空间留言成功`;
+  const summary = String(msg).slice(0,200);
+  const spaceUrl = `https://user.qzone.qq.com/${hostUin}`;
+  const md = `### ✅ QQ空间留言成功\n- 目标空间：${hostUin}\n- 留言摘要：${summary}\n- 时间：${ts}\n- 查看空间：${spaceUrl}`;
+  const txt = `✅ QQ空间留言成功\n目标：${hostUin}\n摘要：${summary}\n时间：${ts}\n入口：${spaceUrl}`;
   if (webhook) {
-    const text = `${kw}: 成功在 ${hostUin} 留言，内容：${String(msg).slice(0,200)}`;
-    try { await dingtalk.sendText(webhook, text); console.log('[NOTIFIED_OK]'); } catch(e){ console.error('[NOTIFY_ERR]', String(e)); }
+    try {
+      if (msgtype === 'markdown') { await dingtalk.sendMarkdown(webhook, title, md); }
+      else { await dingtalk.sendText(webhook, `${kw}: ${txt}`); }
+      console.log('[NOTIFIED_OK]');
+    } catch(e){ console.error('[NOTIFY_ERR]', String(e)); }
   }
 }
 
