@@ -330,9 +330,6 @@ async function main() {
   process.exit(1);
 }
 
-function pad(n) {
-  return String(n).padStart(2, '0');
-}
 
 async function notifyFailure(reason) {
   const webhook = process.env.DINGTALK_WEBHOOK;
